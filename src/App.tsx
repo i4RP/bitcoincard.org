@@ -158,7 +158,7 @@ function App() {
         >
           <div className="flex-1 overflow-hidden">
             <ProgressiveImg
-              src="/images/stas-swap.webp"
+              src="/images/stas-swap.webp?v=2"
               alt="STAS SWAP"
               className="w-full h-full object-cover object-top"
             />
