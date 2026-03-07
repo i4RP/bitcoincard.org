@@ -46,13 +46,79 @@ function getTimeIcon(hour: number) {
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
 
-// Phase 1: Lazy load the BitcoinPay zoom overlay (not needed on first paint)
+// Phase 1: Lazy load overlays (not needed on first paint)
 const BtcPayOverlay = lazy(() => import('./BtcPayOverlay'))
+const WorldClockGlobe = lazy(() => import('./WorldClockGlobe'))
+
+// --- Timezone helpers ---
+function getTimeInTz(tz: string): string {
+  try {
+    return new Date().toLocaleTimeString('ja-JP', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+  } catch {
+    return '--:--'
+  }
+}
+
+function getGreetingForTz(tz: string): string {
+  try {
+    const h = parseInt(new Date().toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', hour12: false }))
+    if (h < 6) return 'おやすみなさい'
+    if (h < 12) return 'おはようございます'
+    if (h < 18) return 'こんにちは'
+    return 'こんばんは'
+  } catch {
+    return ''
+  }
+}
+
+function getTimeIconForTz(tz: string) {
+  try {
+    const h = parseInt(new Date().toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', hour12: false }))
+    if (h >= 6 && h < 10) return <CloudSun className="w-5 h-5 text-amber-400" />
+    if (h >= 10 && h < 17) return <Sun className="w-5 h-5 text-yellow-400" />
+    return <Moon className="w-5 h-5 text-indigo-300" />
+  } catch {
+    return <Moon className="w-5 h-5 text-indigo-300" />
+  }
+}
+
+function getDateInTz(tz: string): { month: number; day: number; weekday: string } {
+  try {
+    const d = new Date()
+    const m = parseInt(d.toLocaleDateString('en-US', { timeZone: tz, month: 'numeric' }))
+    const dy = parseInt(d.toLocaleDateString('en-US', { timeZone: tz, day: 'numeric' }))
+    const wd = d.toLocaleDateString('ja-JP', { timeZone: tz, weekday: 'short' })
+    return { month: m, day: dy, weekday: wd }
+  } catch {
+    return { month: 0, day: 0, weekday: '' }
+  }
+}
+
+interface SelectedCityInfo {
+  name: string
+  nameJa: string
+  tz: string
+}
 
 function App() {
   const [now, setNow] = useState(new Date())
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
+
+  // World Clock state
+  const [showGlobe, setShowGlobe] = useState(false)
+  const [selectedCity, setSelectedCity] = useState<SelectedCityInfo | null>(() => {
+    const saved = localStorage.getItem('worldclock-city')
+    if (saved) {
+      try { return JSON.parse(saved) } catch { return null }
+    }
+    return null
+  })
 
   // BitcoinPay zoom state
   const [btcZoom, setBtcZoom] = useState<'closed' | 'zooming-in' | 'open' | 'zooming-out'>('closed')
@@ -115,14 +181,20 @@ function App() {
     setTimeout(() => setBtcZoom('closed'), 500)
   }, [])
 
-  const hour = now.getHours()
-  const minutes = now.getMinutes()
-  const timeStr = `${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-  const month = now.getMonth() + 1
-  const day = now.getDate()
-  const weekday = WEEKDAYS[now.getDay()]
-  const greeting = getGreeting(hour)
-  const timeIcon = getTimeIcon(hour)
+  // Handle city selection from globe
+  const handleSelectCity = useCallback((city: SelectedCityInfo) => {
+    setSelectedCity(city)
+    localStorage.setItem('worldclock-city', JSON.stringify(city))
+  }, [])
+
+  // Clock display logic - use selected city timezone or local
+  const hour = selectedCity ? parseInt(new Date().toLocaleTimeString('en-US', { timeZone: selectedCity.tz, hour: 'numeric', hour12: false })) : now.getHours()
+  const timeStr = selectedCity ? getTimeInTz(selectedCity.tz) : `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+  const dateInfo = selectedCity ? getDateInTz(selectedCity.tz) : { month: now.getMonth() + 1, day: now.getDate(), weekday: WEEKDAYS[now.getDay()] }
+  const greeting = selectedCity ? getGreetingForTz(selectedCity.tz) : getGreeting(now.getHours())
+  const timeIcon = selectedCity ? getTimeIconForTz(selectedCity.tz) : getTimeIcon(now.getHours())
+  // suppress unused var
+  void hour
 
   return (
     <div className="min-h-screen bg-gray-100 select-none">
@@ -131,8 +203,11 @@ function App() {
       {/* Grid layout */}
       <div className="px-3 grid grid-cols-2 gap-3 pb-10">
 
-        {/* Clock - compact, top-left (1x1) */}
-        <div className="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-4 shadow-lg flex flex-col justify-between aspect-square">
+        {/* Clock - compact, top-left (1x1) - tap to open world clock */}
+        <div
+          onClick={() => setShowGlobe(true)}
+          className="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-4 shadow-lg flex flex-col justify-between aspect-square cursor-pointer active:scale-95 transition-transform"
+        >
           <div className="flex items-center gap-2">
             {timeIcon}
             <span className="text-white/70 text-xs font-medium">{greeting}</span>
@@ -141,9 +216,12 @@ function App() {
             <span className="text-white text-4xl font-extralight tracking-tight leading-none block">
               {timeStr}
             </span>
-            <div className="flex items-center gap-1 mt-2 text-white/60">
+            {selectedCity && (
+              <p className="text-white/50 text-[10px] mt-1">{selectedCity.nameJa}</p>
+            )}
+            <div className="flex items-center gap-1 mt-1 text-white/60">
               <CalendarDays className="w-3.5 h-3.5" />
-              <span className="text-xs">{month}/{day}（{weekday}）</span>
+              <span className="text-xs">{dateInfo.month}/{dateInfo.day}（{dateInfo.weekday}）</span>
             </div>
           </div>
         </div>
@@ -269,6 +347,21 @@ function App() {
             btcZoom={btcZoom}
             btcRect={btcRect}
             closeBtcPay={closeBtcPay}
+          />
+        </Suspense>
+      )}
+
+      {/* World Clock Globe overlay */}
+      {showGlobe && (
+        <Suspense fallback={
+          <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+            <div className="text-white/50 text-sm">Loading...</div>
+          </div>
+        }>
+          <WorldClockGlobe
+            onClose={() => setShowGlobe(false)}
+            onSelectCity={handleSelectCity}
+            selectedTz={selectedCity?.tz || null}
           />
         </Suspense>
       )}
