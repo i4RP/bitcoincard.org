@@ -267,25 +267,22 @@ function App() {
           </div>
         </div>
 
-        {/* STAS SWAP block (1x1) */}
-        <a
-          href="https://molt4x.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform"
+        {/* FLUQ block (1x1) */}
+        <div
+          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform cursor-pointer"
         >
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden flex items-center justify-center bg-gray-50">
             <ProgressiveImg
-              src="/images/stas-swap.webp?v=3"
-              alt="STAS SWAP"
-              className="w-full h-full object-cover object-top"
+              src="/images/fluq.webp"
+              alt="FLUQ"
+              className="w-3/5 h-3/5 object-contain"
             />
           </div>
           <div className="p-3">
-            <p className="text-sm font-bold text-gray-800">STAS SWAP</p>
-            <p className="text-xs text-gray-400">stas.exchange</p>
+            <p className="text-sm font-bold text-gray-800">FLUQ</p>
+            <p className="text-xs text-gray-400">暗号資産会計</p>
           </div>
-        </a>
+        </div>
 
         {/* A World Without Fee - flip card (2x1 wide) */}
         <div
@@ -367,6 +364,26 @@ function App() {
             onEnded={() => setIsPlaying(false)}
           />
         </div>
+
+        {/* STAS SWAP block (1x1) - moved to last */}
+        <a
+          href="https://molt4x.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform"
+        >
+          <div className="flex-1 overflow-hidden">
+            <ProgressiveImg
+              src="/images/stas-swap.webp?v=3"
+              alt="STAS SWAP"
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+          <div className="p-3">
+            <p className="text-sm font-bold text-gray-800">STAS SWAP</p>
+            <p className="text-xs text-gray-400">stas.exchange</p>
+          </div>
+        </a>
 
       </div>
 
