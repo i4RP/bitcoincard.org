@@ -200,7 +200,7 @@ function App() {
             <ProgressiveImg
               src="/images/btcpay.webp?v=3"
               alt="BitcoinPay"
-              className="w-full h-full object-cover object-top"
+              className="w-full h-full object-cover object-center"
             />
           </div>
           <div className="p-3 flex items-center justify-between">
