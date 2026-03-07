@@ -435,7 +435,7 @@ function App() {
             btcZoom={musicZoom}
             btcRect={musicRect}
             closeBtcPay={closeMusic}
-            src="https://nausica.ai"
+            src="https://www.nausica.ai"
             overlayId="music-overlay"
             closePosition="left"
           />
