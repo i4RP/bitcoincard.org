@@ -8,6 +8,7 @@ import {
   Music,
   Pause,
   Play,
+  CreditCard,
 } from 'lucide-react'
 
 // --- Progressive image loader (Phase 1: uses preloaded images) ---
@@ -203,6 +204,25 @@ function App() {
 
       {/* Grid layout */}
       <div className="px-3 grid grid-cols-2 gap-3 pb-10">
+
+        {/* BitcoinCard LP - top banner (2x1 wide) */}
+        <a
+          href="https://lp.bitcoincard.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="col-span-2 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-5 shadow-lg flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer"
+        >
+          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+            <CreditCard className="w-7 h-7 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white font-bold text-base">BitcoinCard</p>
+            <p className="text-white/60 text-xs">Pay anywhere with Bitcoin</p>
+          </div>
+          <div className="px-3 py-1.5 rounded-full bg-white text-gray-900 text-xs font-semibold flex-shrink-0">
+            Apply
+          </div>
+        </a>
 
         {/* Clock - compact, top-left (1x1) - tap to open world clock */}
         <div
