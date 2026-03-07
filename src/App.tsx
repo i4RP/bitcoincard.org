@@ -364,6 +364,26 @@ function App() {
           </div>
         </div>
 
+        {/* SUFARIA block (1x1) */}
+        <a
+          href="https://sufaria.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform"
+        >
+          <div className="flex-1 overflow-hidden flex items-center justify-center bg-gray-50">
+            <ProgressiveImg
+              src="/images/sufaria.webp"
+              alt="SUFARIA"
+              className="w-3/5 h-3/5 object-contain"
+            />
+          </div>
+          <div className="p-3">
+            <p className="text-sm font-bold text-gray-800">SUFARIA</p>
+            <p className="text-xs text-gray-400">暗号メッセージング</p>
+          </div>
+        </a>
+
         {/* STAS SWAP block (1x1) - moved to last */}
         <a
           href="https://molt4x.com"
