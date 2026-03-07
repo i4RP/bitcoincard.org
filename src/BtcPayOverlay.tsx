@@ -78,14 +78,14 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp
 
   return (
     <div id={overlayId} style={getOverlayStyle()} className="bg-white">
-      {/* Invisible back button area - covers hamburger menu and acts as close */}
+      {/* Invisible back button area - covers full top header to close */}
       <div
         onClick={closeBtcPay}
         style={{
           position: 'absolute',
           top: 0,
-          right: 0,
-          width: '60px',
+          left: 0,
+          width: '100%',
           height: '64px',
           zIndex: 10,
           cursor: 'pointer',
