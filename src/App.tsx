@@ -8,7 +8,6 @@ import {
   Music,
   Pause,
   Play,
-  ExternalLink,
 } from 'lucide-react'
 
 // --- Progressive image loader (Phase 1: uses preloaded images) ---
@@ -163,12 +162,9 @@ function App() {
               className="w-full h-full object-cover object-top"
             />
           </div>
-          <div className="p-3 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-gray-800">STAS SWAP</p>
-              <p className="text-xs text-gray-400">stas.exchange</p>
-            </div>
-            <ExternalLink className="w-4 h-4 text-gray-300" />
+          <div className="p-3">
+            <p className="text-sm font-bold text-gray-800">STAS SWAP</p>
+            <p className="text-xs text-gray-400">stas.exchange</p>
           </div>
         </a>
 
@@ -203,12 +199,9 @@ function App() {
               className="w-full h-full object-cover object-center"
             />
           </div>
-          <div className="p-3 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-gray-800">BitcoinPay</p>
-              <p className="text-xs text-gray-400">コーポレートページ</p>
-            </div>
-            <ExternalLink className="w-4 h-4 text-gray-300" />
+          <div className="p-3">
+            <p className="text-sm font-bold text-gray-800">BitcoinPay</p>
+            <p className="text-xs text-gray-400">コーポレートページ</p>
           </div>
         </div>
 
