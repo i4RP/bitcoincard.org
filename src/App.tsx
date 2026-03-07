@@ -127,6 +127,11 @@ function App() {
   const [btcRect, setBtcRect] = useState<DOMRect | null>(null)
   const btcBlockRef = useRef<HTMLDivElement>(null)
 
+  // BitcoinCard LP zoom state
+  const [cardZoom, setCardZoom] = useState<'closed' | 'zooming-in' | 'open' | 'zooming-out'>('closed')
+  const [cardRect, setCardRect] = useState<DOMRect | null>(null)
+  const cardBlockRef = useRef<HTMLDivElement>(null)
+
   // Phase 3: Only start preloading iframe after idle
   const [shouldPreloadIframe, setShouldPreloadIframe] = useState(false)
 
@@ -183,6 +188,22 @@ function App() {
     setTimeout(() => setBtcZoom('closed'), 500)
   }, [])
 
+  const openBtcCard = useCallback(() => {
+    if (!cardBlockRef.current) return
+    const rect = cardBlockRef.current.getBoundingClientRect()
+    setCardRect(rect)
+    setCardZoom('zooming-in')
+    setTimeout(() => setCardZoom('open'), 500)
+  }, [])
+
+  const closeBtcCard = useCallback(() => {
+    if (!cardBlockRef.current) return
+    const rect = cardBlockRef.current.getBoundingClientRect()
+    setCardRect(rect)
+    setCardZoom('zooming-out')
+    setTimeout(() => setCardZoom('closed'), 500)
+  }, [])
+
   // Handle city selection from globe
   const handleSelectCity = useCallback((city: SelectedCityInfo) => {
     setSelectedCity(city)
@@ -205,11 +226,10 @@ function App() {
       {/* Grid layout */}
       <div className="px-3 grid grid-cols-2 gap-3 pb-10">
 
-        {/* BitcoinCard LP - top banner (2x1 wide) */}
-        <a
-          href="https://lp.bitcoincard.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* BitcoinCard LP - top banner (2x1 wide) - tap to zoom */}
+        <div
+          ref={cardBlockRef}
+          onClick={openBtcCard}
           className="col-span-2 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-5 shadow-lg flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer"
         >
           <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
@@ -222,7 +242,7 @@ function App() {
           <div className="px-3 py-1.5 rounded-full bg-white text-gray-900 text-xs font-semibold flex-shrink-0">
             Apply
           </div>
-        </a>
+        </div>
 
         {/* Clock - compact, top-left (1x1) - tap to open world clock */}
         <div
@@ -375,6 +395,19 @@ function App() {
             btcZoom={btcZoom}
             btcRect={btcRect}
             closeBtcPay={closeBtcPay}
+          />
+        </Suspense>
+      )}
+
+      {/* BitcoinCard LP zoom overlay */}
+      {cardZoom !== 'closed' && (
+        <Suspense fallback={null}>
+          <BtcPayOverlay
+            btcZoom={cardZoom}
+            btcRect={cardRect}
+            closeBtcPay={closeBtcCard}
+            src="https://lp.bitcoincard.org"
+            overlayId="card-overlay"
           />
         </Suspense>
       )}

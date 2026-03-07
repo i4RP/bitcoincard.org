@@ -6,9 +6,11 @@ interface BtcPayOverlayProps {
   btcZoom: ZoomState
   btcRect: DOMRect | null
   closeBtcPay: () => void
+  src?: string
+  overlayId?: string
 }
 
-function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay }: BtcPayOverlayProps) {
+function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp', overlayId = 'btc-overlay' }: BtcPayOverlayProps) {
   const getOverlayStyle = (): React.CSSProperties => {
     if (!btcRect) return {}
     if (btcZoom === 'zooming-in') {
@@ -61,7 +63,7 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay }: BtcPayOverlayProps) {
     if (btcZoom === 'zooming-in') {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const overlay = document.getElementById('btc-overlay')
+          const overlay = document.getElementById(overlayId)
           if (overlay) {
             overlay.style.top = '0px'
             overlay.style.left = '0px'
@@ -75,7 +77,7 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay }: BtcPayOverlayProps) {
   }, [btcZoom])
 
   return (
-    <div id="btc-overlay" style={getOverlayStyle()} className="bg-white">
+    <div id={overlayId} style={getOverlayStyle()} className="bg-white">
       {/* Invisible back button area - covers hamburger menu and acts as close */}
       <div
         onClick={closeBtcPay}
@@ -92,8 +94,8 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay }: BtcPayOverlayProps) {
       />
       {/* Iframe of btcpay.jp - already cached by browser from preload */}
       <iframe
-        src="https://btcpay.jp"
-        title="BitcoinPay"
+        src={src}
+        title="Overlay"
         className="w-full h-full border-0"
         style={{ width: '100%', height: '100%' }}
       />
