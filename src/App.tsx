@@ -158,7 +158,7 @@ function App() {
         >
           <div className="flex-1 overflow-hidden">
             <ProgressiveImg
-              src="/images/stas-swap.webp?v=2"
+              src="/images/stas-swap.webp?v=3"
               alt="STAS SWAP"
               className="w-full h-full object-cover object-top"
             />
@@ -198,7 +198,7 @@ function App() {
         >
           <div className="flex-1 overflow-hidden">
             <ProgressiveImg
-              src="/images/btcpay.webp?v=2"
+              src="/images/btcpay.webp?v=3"
               alt="BitcoinPay"
               className="w-full h-full object-cover object-top"
             />
