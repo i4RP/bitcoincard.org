@@ -181,7 +181,7 @@ function App() {
             <ProgressiveImg
               src="/images/bv2.webp"
               alt="A World Without Fee"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-top"
             />
           </div>
           <div className="p-3">
