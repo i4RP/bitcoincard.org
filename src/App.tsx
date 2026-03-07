@@ -371,7 +371,7 @@ function App() {
           rel="noopener noreferrer"
           className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform"
         >
-          <div className="flex-1 overflow-hidden flex items-center justify-center bg-gray-50">
+          <div className="flex-1 overflow-hidden flex items-center justify-center bg-white">
             <ProgressiveImg
               src="/images/sufaria.webp"
               alt="SUFARIA"
