@@ -198,7 +198,7 @@ function App() {
         >
           <div className="flex-1 overflow-hidden">
             <ProgressiveImg
-              src="/images/btcpay.webp"
+              src="/images/btcpay.webp?v=2"
               alt="BitcoinPay"
               className="w-full h-full object-cover object-top"
             />

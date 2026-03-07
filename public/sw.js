@@ -1,5 +1,5 @@
 // Service Worker - Phase 3: Offline cache for instant 2nd+ visits
-const CACHE_NAME = 'bitcoincard-v1';
+const CACHE_NAME = 'bitcoincard-v2';
 const PRECACHE_URLS = [
   '/',
   '/images/stas-swap.webp',
