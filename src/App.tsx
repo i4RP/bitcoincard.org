@@ -108,6 +108,7 @@ interface SelectedCityInfo {
 function App() {
   const [now, setNow] = useState(new Date())
   const [isPlaying, setIsPlaying] = useState(false)
+  const [cardFlipped, setCardFlipped] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   // World Clock state
@@ -246,23 +247,30 @@ function App() {
           </div>
         </a>
 
-        {/* A World Without Fee - banner (2x1 wide) */}
-        <a
-          href="#"
-          className="col-span-2 rounded-2xl bg-white shadow-md overflow-hidden active:scale-[0.98] transition-transform"
+        {/* A World Without Fee - flip card (2x1 wide) */}
+        <div
+          onClick={() => setCardFlipped(f => !f)}
+          className="col-span-2 flip-card cursor-pointer active:scale-[0.98] transition-transform"
         >
-          <div className="h-44 overflow-hidden">
-            <ProgressiveImg
-              src="/images/bv2.webp"
-              alt="A World Without Fee"
-              className="w-full h-full object-cover object-top"
-            />
+          <div className={`flip-card-inner${cardFlipped ? ' flipped' : ''}`}>
+            {/* Front */}
+            <div className="flip-card-front rounded-2xl bg-white shadow-md overflow-hidden">
+              <ProgressiveImg
+                src="/images/card-front.webp"
+                alt="A World Without Fee"
+                className="w-full h-auto object-contain"
+              />
+            </div>
+            {/* Back */}
+            <div className="flip-card-back rounded-2xl bg-white shadow-md overflow-hidden">
+              <ProgressiveImg
+                src="/images/card-back.webp"
+                alt="A World Without Fee - Back"
+                className="w-full h-auto object-contain"
+              />
+            </div>
           </div>
-          <div className="p-3">
-            <p className="text-sm font-bold text-gray-800">A World Without Fee</p>
-            <p className="text-xs text-gray-400">Prosperity and Freedom</p>
-          </div>
-        </a>
+        </div>
 
         {/* BitcoinPay block (1x1) - tap to zoom */}
         <div
