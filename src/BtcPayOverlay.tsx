@@ -8,9 +8,10 @@ interface BtcPayOverlayProps {
   closeBtcPay: () => void
   src?: string
   overlayId?: string
+  closePosition?: 'left' | 'right-exclude'
 }
 
-function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp', overlayId = 'btc-overlay' }: BtcPayOverlayProps) {
+function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp', overlayId = 'btc-overlay', closePosition = 'right-exclude' }: BtcPayOverlayProps) {
   const getOverlayStyle = (): React.CSSProperties => {
     if (!btcRect) return {}
     if (btcZoom === 'zooming-in') {
@@ -78,14 +79,14 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp
 
   return (
     <div id={overlayId} style={getOverlayStyle()} className="bg-white">
-      {/* Invisible back button area - covers top header except right 60px (globe icon) */}
+      {/* Invisible back button area */}
       <div
         onClick={closeBtcPay}
         style={{
           position: 'absolute',
           top: 0,
-          left: 0,
-          width: 'calc(100% - 60px)',
+          left: closePosition === 'left' ? 0 : 0,
+          width: closePosition === 'left' ? '60px' : 'calc(100% - 60px)',
           height: '64px',
           zIndex: 10,
           cursor: 'pointer',

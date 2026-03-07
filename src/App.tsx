@@ -6,7 +6,6 @@ import {
   Moon,
   CloudSun,
   Music,
-  Pause,
   Play,
   CreditCard,
 } from 'lucide-react'
@@ -108,9 +107,7 @@ interface SelectedCityInfo {
 
 function App() {
   const [now, setNow] = useState(new Date())
-  const [isPlaying, setIsPlaying] = useState(false)
   const [cardFlipped, setCardFlipped] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
 
   // World Clock state
   const [showGlobe, setShowGlobe] = useState(false)
@@ -131,6 +128,11 @@ function App() {
   const [cardZoom, setCardZoom] = useState<'closed' | 'zooming-in' | 'open' | 'zooming-out'>('closed')
   const [cardRect, setCardRect] = useState<DOMRect | null>(null)
   const cardBlockRef = useRef<HTMLDivElement>(null)
+
+  // Nausica.ai (Music) zoom state
+  const [musicZoom, setMusicZoom] = useState<'closed' | 'zooming-in' | 'open' | 'zooming-out'>('closed')
+  const [musicRect, setMusicRect] = useState<DOMRect | null>(null)
+  const musicBlockRef = useRef<HTMLDivElement>(null)
 
   // Phase 3: Only start preloading iframe after idle
   const [shouldPreloadIframe, setShouldPreloadIframe] = useState(false)
@@ -162,16 +164,6 @@ function App() {
     }
   }, [])
 
-  const toggleAudio = () => {
-    if (!audioRef.current) return
-    if (isPlaying) {
-      audioRef.current.pause()
-    } else {
-      audioRef.current.play()
-    }
-    setIsPlaying(!isPlaying)
-  }
-
   const openBtcPay = useCallback(() => {
     if (!btcBlockRef.current) return
     const rect = btcBlockRef.current.getBoundingClientRect()
@@ -202,6 +194,22 @@ function App() {
     setCardRect(rect)
     setCardZoom('zooming-out')
     setTimeout(() => setCardZoom('closed'), 500)
+  }, [])
+
+  const openMusic = useCallback(() => {
+    if (!musicBlockRef.current) return
+    const rect = musicBlockRef.current.getBoundingClientRect()
+    setMusicRect(rect)
+    setMusicZoom('zooming-in')
+    setTimeout(() => setMusicZoom('open'), 500)
+  }, [])
+
+  const closeMusic = useCallback(() => {
+    if (!musicBlockRef.current) return
+    const rect = musicBlockRef.current.getBoundingClientRect()
+    setMusicRect(rect)
+    setMusicZoom('zooming-out')
+    setTimeout(() => setMusicZoom('closed'), 500)
   }, [])
 
   // Handle city selection from globe
@@ -328,26 +336,23 @@ function App() {
           </div>
         </div>
 
-        {/* Audio player block (1x1) */}
-        <div className="rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 shadow-lg p-4 flex flex-col justify-between aspect-square">
+        {/* Music / nausica.ai block (1x1) - tap to zoom */}
+        <div
+          ref={musicBlockRef}
+          onClick={openMusic}
+          className="rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 shadow-lg p-4 flex flex-col justify-between aspect-square cursor-pointer active:scale-95 transition-transform"
+        >
           <div className="flex items-center gap-2">
             <Music className="w-5 h-5 text-white/80" />
             <span className="text-white/80 text-xs font-medium">Music</span>
           </div>
           <div className="flex flex-col items-center gap-3">
             <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-              <button
-                onClick={toggleAudio}
-                className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg active:scale-90 transition-transform"
-              >
-                {isPlaying ? (
-                  <Pause className="w-6 h-6 text-rose-500" />
-                ) : (
-                  <Play className="w-6 h-6 text-rose-500 ml-0.5" />
-                )}
-              </button>
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
+                <Play className="w-6 h-6 text-rose-500 ml-0.5" />
+              </div>
             </div>
-            <div className={`flex gap-0.5 ${isPlaying ? 'animate-pulse' : ''}`}>
+            <div className="flex gap-0.5">
               {[3, 5, 2, 6, 4, 3, 5].map((h, i) => (
                 <div
                   key={i}
@@ -357,12 +362,6 @@ function App() {
               ))}
             </div>
           </div>
-          <audio
-            ref={audioRef}
-            src={new Date().getMonth() === 2 ? '/images/audio-march.mp3' : '/images/audio.mp3'}
-            preload="none"
-            onEnded={() => setIsPlaying(false)}
-          />
         </div>
 
         {/* STAS SWAP block (1x1) - moved to last */}
@@ -425,6 +424,20 @@ function App() {
             closeBtcPay={closeBtcCard}
             src="https://lp.bitcoincard.org"
             overlayId="card-overlay"
+          />
+        </Suspense>
+      )}
+
+      {/* Nausica.ai (Music) zoom overlay */}
+      {musicZoom !== 'closed' && (
+        <Suspense fallback={null}>
+          <BtcPayOverlay
+            btcZoom={musicZoom}
+            btcRect={musicRect}
+            closeBtcPay={closeMusic}
+            src="https://nausica.ai"
+            overlayId="music-overlay"
+            closePosition="left"
           />
         </Suspense>
       )}
