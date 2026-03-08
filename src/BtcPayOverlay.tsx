@@ -60,6 +60,12 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://about.btc
   }
 
   const [showBackBar, setShowBackBar] = useState(false)
+  const [iframeError, setIframeError] = useState(false)
+
+  // Detect iframe load failure via timeout - if iframe content triggers error, show fallback
+  useEffect(() => {
+    setIframeError(false)
+  }, [src])
 
   // Force expanded style after initial render for zooming-in
   useEffect(() => {
@@ -130,13 +136,28 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://about.btc
       >
         <span style={{ color: 'white', fontSize: '14px', fontWeight: 500, textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>↑ 戻る</span>
       </div>
-      {/* Iframe of btcpay.jp - already cached by browser from preload */}
-      <iframe
-        src={src}
-        title="Overlay"
-        className="w-full h-full border-0"
-        style={{ width: '100%', height: '100%' }}
-      />
+      {/* Iframe content or error fallback */}
+      {iframeError ? (
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '24px', textAlign: 'center' }}>
+          <p style={{ color: '#666', fontSize: '14px' }}>このサイトは現在表示できません</p>
+          <a
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#fff', background: '#6366f1', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}
+          >
+            新しいタブで開く ↗
+          </a>
+        </div>
+      ) : (
+        <iframe
+          src={src}
+          title="Overlay"
+          className="w-full h-full border-0"
+          style={{ width: '100%', height: '100%' }}
+          onError={() => setIframeError(true)}
+        />
+      )}
     </div>
   )
 }
