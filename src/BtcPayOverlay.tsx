@@ -127,7 +127,7 @@ function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp
           cursor: 'pointer',
         }}
       >
-        <span style={{ color: 'white', fontSize: '14px', fontWeight: 500, textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>← 戻る</span>
+        <span style={{ color: 'white', fontSize: '14px', fontWeight: 500, textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>↑ 戻る</span>
       </div>
       {/* Iframe of btcpay.jp - already cached by browser from preload */}
       <iframe
