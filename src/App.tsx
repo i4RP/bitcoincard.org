@@ -134,6 +134,11 @@ function App() {
   const [musicRect, setMusicRect] = useState<DOMRect | null>(null)
   const musicBlockRef = useRef<HTMLDivElement>(null)
 
+  // BitcoinPay Widget zoom state
+  const [widgetZoom, setWidgetZoom] = useState<'closed' | 'zooming-in' | 'open' | 'zooming-out'>('closed')
+  const [widgetRect, setWidgetRect] = useState<DOMRect | null>(null)
+  const widgetBlockRef = useRef<HTMLDivElement>(null)
+
   // Phase 3: Only start preloading iframe after idle
   const [shouldPreloadIframe, setShouldPreloadIframe] = useState(false)
 
@@ -210,6 +215,22 @@ function App() {
     setMusicRect(rect)
     setMusicZoom('zooming-out')
     setTimeout(() => setMusicZoom('closed'), 500)
+  }, [])
+
+  const openWidget = useCallback(() => {
+    if (!widgetBlockRef.current) return
+    const rect = widgetBlockRef.current.getBoundingClientRect()
+    setWidgetRect(rect)
+    setWidgetZoom('zooming-in')
+    setTimeout(() => setWidgetZoom('open'), 500)
+  }, [])
+
+  const closeWidget = useCallback(() => {
+    if (!widgetBlockRef.current) return
+    const rect = widgetBlockRef.current.getBoundingClientRect()
+    setWidgetRect(rect)
+    setWidgetZoom('zooming-out')
+    setTimeout(() => setWidgetZoom('closed'), 500)
   }, [])
 
   // Handle city selection from globe
@@ -364,6 +385,25 @@ function App() {
           </div>
         </div>
 
+        {/* BitcoinPay 決済ウィジェット block (1x1) - tap to zoom */}
+        <div
+          ref={widgetBlockRef}
+          onClick={openWidget}
+          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform cursor-pointer"
+        >
+          <div className="flex-1 overflow-hidden">
+            <ProgressiveImg
+              src="/images/bitcoinpay-widget.webp"
+              alt="BitcoinPay 決済ウィジェット"
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+          <div className="p-3">
+            <p className="text-sm font-bold text-gray-800">BitcoinPay</p>
+            <p className="text-xs text-gray-400">決済ウィジェット</p>
+          </div>
+        </div>
+
         {/* SUFARIA block (1x1) */}
         <a
           href="https://sufaria.com"
@@ -458,6 +498,19 @@ function App() {
             src="https://www.nausica.ai"
             overlayId="music-overlay"
             closePosition="left"
+          />
+        </Suspense>
+      )}
+
+      {/* BitcoinPay Widget zoom overlay */}
+      {widgetZoom !== 'closed' && (
+        <Suspense fallback={null}>
+          <BtcPayOverlay
+            btcZoom={widgetZoom}
+            btcRect={widgetRect}
+            closeBtcPay={closeWidget}
+            src="https://bitcoinpay.co.jp"
+            overlayId="widget-overlay"
           />
         </Suspense>
       )}
