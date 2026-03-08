@@ -11,7 +11,7 @@ interface BtcPayOverlayProps {
   closePosition?: 'left' | 'right-exclude'
 }
 
-function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://btcpay.jp', overlayId = 'btc-overlay', closePosition = 'right-exclude' }: BtcPayOverlayProps) {
+function BtcPayOverlay({ btcZoom, btcRect, closeBtcPay, src = 'https://about.btcpay.jp', overlayId = 'btc-overlay', closePosition = 'right-exclude' }: BtcPayOverlayProps) {
   const getOverlayStyle = (): React.CSSProperties => {
     if (!btcRect) return {}
     if (btcZoom === 'zooming-in') {

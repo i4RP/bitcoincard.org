@@ -449,7 +449,7 @@ function App() {
       {/* Phase 3: Deferred iframe preload - only after idle */}
       {shouldPreloadIframe && (
         <iframe
-          src="https://btcpay.jp"
+          src="https://about.btcpay.jp"
           title="BitcoinPay Preload"
           style={{
             position: 'fixed',
