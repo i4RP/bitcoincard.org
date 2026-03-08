@@ -9,6 +9,7 @@ import {
   Play,
   CreditCard,
 } from 'lucide-react'
+import { getConfig, DEFAULT_CONFIG, type BlockConfig } from './config'
 
 // --- Progressive image loader (Phase 1: uses preloaded images) ---
 function ProgressiveImg({ src, alt, className }: { src: string; alt: string; className: string }) {
@@ -105,9 +106,25 @@ interface SelectedCityInfo {
   tz: string
 }
 
-function App() {
+interface AppProps {
+  blockConfigOverride?: BlockConfig
+}
+
+function App({ blockConfigOverride }: AppProps) {
   const [now, setNow] = useState(new Date())
   const [cardFlipped, setCardFlipped] = useState(false)
+  const [blockConfig, setBlockConfig] = useState<BlockConfig>({ ...DEFAULT_CONFIG })
+
+  // Load block visibility config
+  useEffect(() => {
+    if (blockConfigOverride) {
+      setBlockConfig(blockConfigOverride)
+      return
+    }
+    getConfig(false).then(setBlockConfig)
+  }, [blockConfigOverride])
+
+  const isVisible = (blockId: string) => blockConfig[blockId] !== false
 
   // World Clock state
   const [showGlobe, setShowGlobe] = useState(false)
@@ -256,7 +273,7 @@ function App() {
       <div className="px-3 grid grid-cols-2 gap-3 pb-10">
 
         {/* BitcoinCard LP - top banner (2x1 wide) - tap to zoom */}
-        <div
+        {isVisible('bitcoincard') && <div
           ref={cardBlockRef}
           onClick={openBtcCard}
           className="col-span-2 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 p-5 shadow-lg flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer"
@@ -271,9 +288,10 @@ function App() {
           <div className="px-3 py-1.5 rounded-full bg-white text-gray-900 text-xs font-semibold flex-shrink-0">
             Apply
           </div>
-        </div>
+        </div>}
 
         {/* Clock - compact, top-left (1x1) - tap to open world clock */}
+        {isVisible('clock') &&
         <div
           onClick={() => setShowGlobe(true)}
           className="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-4 shadow-lg flex flex-col justify-between aspect-square cursor-pointer active:scale-95 transition-transform"
@@ -294,10 +312,10 @@ function App() {
               <span className="text-xs">{dateInfo.month}/{dateInfo.day}（{dateInfo.weekday}）</span>
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* FLUQ block (1x1) */}
-        <div
+        {isVisible('fluq') && <div
           className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform cursor-pointer"
         >
           <div className="flex-1 overflow-hidden flex items-center justify-center bg-gray-50">
@@ -311,9 +329,10 @@ function App() {
             <p className="text-sm font-bold text-gray-800">FLUQ</p>
             <p className="text-xs text-gray-400">暗号資産会計</p>
           </div>
-        </div>
+        </div>}
 
         {/* A World Without Fee - flip card (2x1 wide) */}
+        {isVisible('awwf') &&
         <div
           onClick={() => setCardFlipped(f => !f)}
           className="col-span-2 flip-card cursor-pointer active:scale-[0.98] transition-transform"
@@ -336,10 +355,10 @@ function App() {
               />
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* BitcoinPay block (1x1) - tap to zoom */}
-        <div
+        {isVisible('bitcoinpay') && <div
           ref={btcBlockRef}
           onClick={openBtcPay}
           className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform cursor-pointer"
@@ -355,10 +374,10 @@ function App() {
             <p className="text-sm font-bold text-gray-800">BitcoinPay</p>
             <p className="text-xs text-gray-400">コーポレートページ</p>
           </div>
-        </div>
+        </div>}
 
         {/* Music / nausica.ai block (1x1) - tap to zoom */}
-        <div
+        {isVisible('music') && <div
           ref={musicBlockRef}
           onClick={openMusic}
           className="rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 shadow-lg p-4 flex flex-col justify-between aspect-square cursor-pointer active:scale-95 transition-transform"
@@ -383,10 +402,10 @@ function App() {
               ))}
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* BitcoinPay 決済ウィジェット block (1x1) - tap to zoom */}
-        <div
+        {isVisible('widget') && <div
           ref={widgetBlockRef}
           onClick={openWidget}
           className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform cursor-pointer"
@@ -402,10 +421,10 @@ function App() {
             <p className="text-sm font-bold text-gray-800">BitcoinPay</p>
             <p className="text-xs text-gray-400">決済ウィジェット</p>
           </div>
-        </div>
+        </div>}
 
         {/* SUFARIA block (1x1) */}
-        <a
+        {isVisible('sufaria') && <a
           href="https://sufaria.com"
           target="_blank"
           rel="noopener noreferrer"
@@ -422,10 +441,10 @@ function App() {
             <p className="text-sm font-bold text-gray-800">SUFARIA</p>
             <p className="text-xs text-gray-400">暗号メッセージング</p>
           </div>
-        </a>
+        </a>}
 
         {/* STAS SWAP block (1x1) - moved to last */}
-        <a
+        {isVisible('stas-swap') && <a
           href="https://molt4x.com"
           target="_blank"
           rel="noopener noreferrer"
@@ -442,7 +461,7 @@ function App() {
             <p className="text-sm font-bold text-gray-800">STAS SWAP</p>
             <p className="text-xs text-gray-400">stas.exchange</p>
           </div>
-        </a>
+        </a>}
 
       </div>
 
