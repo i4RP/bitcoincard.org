@@ -270,7 +270,7 @@ function App({ blockConfigOverride }: AppProps) {
       <div className="h-6" />
 
       {/* Grid layout */}
-      <div className="px-3 grid grid-cols-2 gap-3 pb-10">
+      <div className="px-3 grid grid-cols-2 gap-3 pb-10 grid-flow-row-dense">
 
         {/* BitcoinCard LP - top banner (2x1 wide) - tap to zoom */}
         {isVisible('bitcoincard') && <div
