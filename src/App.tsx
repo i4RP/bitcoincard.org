@@ -156,6 +156,11 @@ function App({ blockConfigOverride }: AppProps) {
   const [widgetRect, setWidgetRect] = useState<DOMRect | null>(null)
   const widgetBlockRef = useRef<HTMLDivElement>(null)
 
+  // SUFARIA zoom state
+  const [sufariaZoom, setSufariaZoom] = useState<'closed' | 'zooming-in' | 'open' | 'zooming-out'>('closed')
+  const [sufariaRect, setSufariaRect] = useState<DOMRect | null>(null)
+  const sufariaBlockRef = useRef<HTMLDivElement>(null)
+
   // Phase 3: Only start preloading iframe after idle
   const [shouldPreloadIframe, setShouldPreloadIframe] = useState(false)
 
@@ -248,6 +253,22 @@ function App({ blockConfigOverride }: AppProps) {
     setWidgetRect(rect)
     setWidgetZoom('zooming-out')
     setTimeout(() => setWidgetZoom('closed'), 500)
+  }, [])
+
+  const openSufaria = useCallback(() => {
+    if (!sufariaBlockRef.current) return
+    const rect = sufariaBlockRef.current.getBoundingClientRect()
+    setSufariaRect(rect)
+    setSufariaZoom('zooming-in')
+    setTimeout(() => setSufariaZoom('open'), 500)
+  }, [])
+
+  const closeSufaria = useCallback(() => {
+    if (!sufariaBlockRef.current) return
+    const rect = sufariaBlockRef.current.getBoundingClientRect()
+    setSufariaRect(rect)
+    setSufariaZoom('zooming-out')
+    setTimeout(() => setSufariaZoom('closed'), 500)
   }, [])
 
   // Handle city selection from globe
@@ -423,12 +444,11 @@ function App({ blockConfigOverride }: AppProps) {
           </div>
         </div>}
 
-        {/* SUFARIA block (1x1) */}
-        {isVisible('sufaria') && <a
-          href="https://sufaria.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform"
+        {/* SUFARIA block (1x1) - tap to zoom */}
+        {isVisible('sufaria') && <div
+          ref={sufariaBlockRef}
+          onClick={openSufaria}
+          className="rounded-2xl bg-white shadow-md overflow-hidden flex flex-col aspect-square active:scale-95 transition-transform cursor-pointer"
         >
           <div className="flex-1 overflow-hidden flex items-center justify-center bg-white">
             <ProgressiveImg
@@ -441,7 +461,7 @@ function App({ blockConfigOverride }: AppProps) {
             <p className="text-sm font-bold text-gray-800">SUFARIA</p>
             <p className="text-xs text-gray-400">暗号メッセージング</p>
           </div>
-        </a>}
+        </div>}
 
         {/* STAS SWAP block (1x1) - moved to last */}
         {isVisible('stas-swap') && <a
@@ -530,6 +550,19 @@ function App({ blockConfigOverride }: AppProps) {
             closeBtcPay={closeWidget}
             src="https://bitcoinpay.co.jp"
             overlayId="widget-overlay"
+          />
+        </Suspense>
+      )}
+
+      {/* SUFARIA zoom overlay */}
+      {sufariaZoom !== 'closed' && (
+        <Suspense fallback={null}>
+          <BtcPayOverlay
+            btcZoom={sufariaZoom}
+            btcRect={sufariaRect}
+            closeBtcPay={closeSufaria}
+            src="https://sufaria.com"
+            overlayId="sufaria-overlay"
           />
         </Suspense>
       )}
